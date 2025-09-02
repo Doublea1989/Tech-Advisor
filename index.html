@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Tech Adviser</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117;
+            color: #c9d1d9;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 800px;
+            width: 100%;
+            background-color: #161b22;
+            border: 1px solid #30363d;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+        }
+        input, select, textarea {
+            background-color: #0d1117;
+            border: 1px solid #30363d;
+            color: #c9d1d9;
+            border-radius: 6px;
+            padding: 0.75rem;
+            width: 100%;
+            transition: all 0.2s;
+        }
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #58a6ff;
+            box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.25);
+        }
+        button {
+            background-color: #238636;
+            color: #c9d1d9;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            transition: background-color 0.2s;
+        }
+        button:hover {
+            background-color: #2ea043;
+        }
+        .tab-button {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .tab-button.active {
+            background-color: #30363d;
+            border-color: #58a6ff;
+            color: #58a6ff;
+        }
+        .result-card {
+            opacity: 0;
+            transform: translateY(20px);
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container space-y-8">
+    <div class="text-center space-y-2">
+        <h1 class="text-3xl sm:text-4xl font-bold">The Tech Adviser</h1>
+        <p class="text-gray-400">Your smart guide to finding the perfect electronic device.</p>
+    </div>
+
+    <div class="flex justify-center space-x-2">
+        <button id="tab-tv" class="tab-button active">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-1.75-3M18 10h1a2 2 0 012 2v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2zM4 10h1a2 2 0 012 2v3a2 2 0 01-2 2H4a2 2 0 01-2-2v-3a2 2 0 012-2z"/>
+            </svg>
+            TV
+        </button>
+        <button id="tab-laptop" class="tab-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-1.75-3M18 10h1a2 2 0 012 2v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2zM4 10h1a2 2 0 012 2v3a2 2 0 01-2 2H4a2 2 0 01-2-2v-3a2 2 0 012-2z"/>
+            </svg>
+            Laptop
+        </button>
+        <button id="tab-headphones" class="tab-button">
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline-block h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9.75 17L9 20l-1 1h8l-1-1-1.75-3M18 10h1a2 2 0 012 2v3a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2zM4 10h1a2 2 0 012 2v3a2 2 0 01-2 2H4a2 2 0 01-2-2v-3a2 2 0 012-2z"/>
+            </svg>
+            Headphones
+        </button>
+    </div>
+
+    <div class="space-y-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+                <label for="min-budget" class="block text-sm font-medium text-gray-400 mb-1">Your Budget ($)</label>
+                <div class="flex space-x-2">
+                    <input type="number" id="min-budget" placeholder="Min" class="flex-1 rounded-md" />
+                    <input type="number" id="max-budget" placeholder="Max" class="flex-1 rounded-md" />
+                </div>
+            </div>
+            <div id="specific-input">
+                <!-- Specific inputs will be dynamically inserted here -->
+            </div>
+        </div>
+        
+        <div>
+            <label for="features" class="block text-sm font-medium text-gray-400 mb-1">Key Features & Use Case</label>
+            <textarea id="features" rows="3" placeholder="Tell us more about what you need..."></textarea>
+        </div>
+
+        <button onclick="getRecommendations()" class="w-full">Get Recommendations</button>
+    </div>
+
+    <div id="loading-indicator" class="hidden text-center text-gray-400">
+        <div class="w-8 h-8 border-4 border-gray-500 border-t-blue-500 rounded-full animate-spin mx-auto mb-2"></div>
+        Searching for the perfect device...
+    </div>
+
+    <div id="results" class="space-y-6">
+        <!-- Results will be dynamically inserted here -->
+    </div>
+
+    <div class="mt-8 text-center text-gray-400">
+        <div class="p-6 rounded-lg border border-gray-700 bg-gray-800 mb-4">
+            <h3 class="text-xl font-semibold mb-2 text-gray-200">How It Works</h3>
+            <p class="text-sm">We analyze millions of data points from expert reviews on CNET, RTINGS.com, PC Gamer, and other reputable sources to find the best products for your needs. Our recommendations include key specs, pros and cons, and real-time pricing trends. We may earn a small commission on purchases made through our links, which helps us provide this service for free, but it never influences our recommendations.</p>
+        </div>
+        <div class="p-6 rounded-lg border border-gray-700 bg-gray-800">
+            <h3 class="text-xl font-semibold mb-2 text-gray-200">Why Trust Us?</h3>
+            <p class="text-sm">Our recommendations are based on objective, third-party analysis from trusted tech journalists and reviewers. We prioritize value and performance to give you a clear, unbiased path to your next purchase. We are committed to transparency and helping you make an informed decision.</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    let currentCategory = 'tv';
+
+    const mockData = {
+        tv: {
+            inputHtml: `<label for="screen-size" class="block text-sm font-medium text-gray-400 mb-1">Preferred Screen Size (inches)</label><input type="number" id="screen-size" placeholder="e.g., 65" />`,
+            recommendations: [
+                {
+                    model: "LG OLED C4",
+                    description: "A top-tier TV praised by CNET and RTINGS for its perfect black levels, infinite contrast, and top-of-the-line gaming performance. It's often cited as the best OLED for the money.",
+                    whyPick: "For a user who wants the best possible picture quality for movies and gaming, the LG C4 is the perfect pick. Its OLED technology delivers perfect blacks, making content incredibly immersive.",
+                    price: 1297,
+                    pros: ["Perfect blacks & infinite contrast", "High refresh rate for gaming", "Sleek, minimalist design"],
+                    cons: ["Still a premium price point", "Not as bright as the flagship G5 model"],
+                    bestPrice: "$1,297",
+                    lowestRecordedPrice: "$1,150",
+                    bestTimeToBuy: "Super Bowl sales (Jan-Feb) or when new models are released in the spring (March-April).",
+                    affiliateLink: "https://www.example.com/lg-c4-affiliate-link"
+                },
+                {
+                    model: "Samsung S95F OLED",
+                    description: "Considered one of the best TVs for picture quality, especially in bright rooms due to its superior anti-glare screen. A premium choice for movie enthusiasts and gamers.",
+                    whyPick: "If your primary viewing environment is a bright room with lots of light, the Samsung S95F is the best choice. Its matte finish virtually eliminates glare while still delivering stunning picture quality.",
+                    price: 2798,
+                    pros: ["Best-in-class anti-glare screen", "Superior contrast and off-angle viewing", "Brighter than most OLEDs"],
+                    cons: ["Very expensive", "Slightly diminished contrast in dark rooms"],
+                    bestPrice: "$2,798",
+                    lowestRecordedPrice: "$2,500",
+                    bestTimeToBuy: "Black Friday (November) or when new models are announced in the spring (March-April).",
+                    affiliateLink: "https://www.example.com/samsung-s95f-affiliate-link"
+                },
+                {
+                    model: "Hisense U8N",
+                    description: "An incredibly bright and affordable Mini-LED TV. PCMag and CNET recommend it as a cheaper alternative to top-tier OLEDs, offering great picture quality that easily overcomes glare in bright rooms.",
+                    whyPick: "For a user on a budget who wants a TV that can handle bright rooms and still provide a great picture, the Hisense U8N is the best value. It uses Mini-LED technology to achieve excellent brightness without the premium price of an OLED.",
+                    price: 921,
+                    pros: ["Incredibly bright picture", "Excellent value for money", "Solid gaming features"],
+                    cons: ["Can have minor blooming artifacts", "Color accuracy not as perfect as OLED"],
+                    bestPrice: "$921",
+                    lowestRecordedPrice: "$850",
+                    bestTimeToBuy: "Black Friday (Nov) or major sales events like Amazon Prime Day (July).",
+                    affiliateLink: "https://www.example.com/hisense-u8n-affiliate-link"
+                }
+            ],
+            purchaseAdvice: "Based on data from CNET and RTINGS, the best times to buy a TV are during Super Bowl sales (Jan-Feb), when new models are released in the spring (Mar-Apr), and especially during Black Friday/Cyber Monday (Nov). We recommend keeping an eye on price tracking sites to catch the lowest recorded prices."
+        },
+        laptop: {
+            inputHtml: `
+                <label for="use-case" class="block text-sm font-medium text-gray-400 mb-1">Primary Use Case</label>
+                <select id="use-case" class="flex-1 rounded-md">
+                    <option value="" disabled selected>Select a purpose</option>
+                    <option value="student">Student / Everyday Use</option>
+                    <option value="professional">Professional / Creative Work</option>
+                    <option value="gamer">Gamer</option>
+                </select>
+            `,
+            recommendations: {
+                student: [
+                    {
+                        model: "MacBook Air (M4)",
+                        description: "CNET's top pick for most students. This laptop provides a fantastic balance of portability, performance, and exceptional battery life in a beautiful and silent design.",
+                        whyPick: "Its incredible battery life and powerful, yet efficient, M4 chip make it the ultimate choice for students who need a reliable machine for all-day use without being tied to a power outlet. It’s also incredibly lightweight for carrying around campus.",
+                        price: 999,
+                        pros: ["All-day battery life", "Premium, lightweight design", "Strong performance for its class"],
+                        cons: ["Limited ports", "Not user-upgradable"],
+                        bestPrice: "$999",
+                        lowestRecordedPrice: "$799",
+                        bestTimeToBuy: "Back-to-school season (July-August) and the 'Black Friday season' (Oct-Nov).",
+                        affiliateLink: "https://www.example.com/macbook-air-m4-affiliate-link"
+                    },
+                    {
+                        model: "Acer Aspire 14 AI",
+                        description: "A great budget-friendly Windows laptop recommended by CNET for students who need a reliable machine for everyday tasks without breaking the bank. It offers a solid performance for its price point.",
+                        whyPick: "For the student on a strict budget, this laptop delivers all the essentials you need for schoolwork, web browsing, and streaming. It's an excellent value with dependable performance for daily tasks.",
+                        price: 530,
+                        pros: ["Very affordable", "Solid everyday performance", "Includes AI features"],
+                        cons: ["Plastic build quality", "Screen is not high-end"],
+                        bestPrice: "$530",
+                        lowestRecordedPrice: "$450",
+                        bestTimeToBuy: "Back-to-school season (July-August) and major holiday sales.",
+                        affiliateLink: "https://www.example.com/acer-aspire-14-ai-affiliate-link"
+                    },
+                    {
+                        model: "Asus Zenbook A14",
+                        description: "A great Windows alternative to the MacBook Air. CNET praises its fantastic battery life and lightweight design, making it an ideal ultraportable laptop for students and professionals on the go.",
+                        whyPick: "This laptop offers a premium experience for Windows users who value portability and battery life. It's a great all-around choice that's perfect for carrying between classes and handling a variety of workloads.",
+                        price: 1200,
+                        pros: ["Excellent battery life", "Extremely light and thin", "High-quality display"],
+                        cons: ["Can be more expensive than other options", "No discrete graphics"],
+                        bestPrice: "$1,200",
+                        lowestRecordedPrice: "$1,000",
+                        bestTimeToBuy: "Back-to-school sales or direct from Asus promotions.",
+                        affiliateLink: "https://www.example.com/asus-zenbook-a14-affiliate-link"
+                    }
+                ],
+                professional: [
+                    {
+                        model: "Dell XPS 16",
+                        description: "A premium Windows laptop with a stunning OLED screen, perfect for creative professionals. CNET recommends it for its excellent display and powerful components for video editing and design.",
+                        whyPick: "For professionals who need a machine with a powerful processor and a color-accurate display for tasks like video editing and graphic design, the Dell XPS 16 is a top-tier option. The 4K OLED screen is a standout feature.",
+                        price: 2300,
+                        pros: ["Gorgeous 4K OLED display", "Powerful Intel processor and graphics", "Sleek, minimalist design"],
+                        cons: ["Very expensive", "Limited to USB-C ports"],
+                        bestPrice: "$2,300",
+                        lowestRecordedPrice: "$2,000",
+                        bestTimeToBuy: "Major sales events and direct-from-Dell promotions.",
+                        affiliateLink: "https://www.example.com/dell-xps-16-affiliate-link"
+                    },
+                    {
+                        model: "Lenovo ThinkPad X9 14 Aura Edition",
+                        description: "PCMag's top business laptop pick. The ThinkPad series is known for its legendary durability, best-in-class keyboard, and robust security features, making it a reliable workhorse for any professional.",
+                        whyPick: "If you need a laptop that's built to last and provides a no-compromise professional experience, the ThinkPad is the gold standard. Its keyboard is unrivaled for typing, and its security features are perfect for business use.",
+                        price: 2095,
+                        pros: ["Unrivaled build quality & durability", "Excellent keyboard", "Lightweight for its class"],
+                        cons: ["Premium price", "Not designed for heavy gaming"],
+                        bestPrice: "$2,095",
+                        lowestRecordedPrice: "$1,800",
+                        bestTimeToBuy: "Lenovo's frequent direct-to-consumer sales.",
+                        affiliateLink: "https://www.example.com/lenovo-thinkpad-x9-affiliate-link"
+                    },
+                    {
+                        model: "MacBook Pro 14-inch (M4)",
+                        description: "Apple's powerhouse laptop, praised by reviewers for its stunning Liquid Retina XDR display, incredible performance from the M4 chip, and long battery life. It's the go-to for many creative professionals.",
+                        whyPick: "This is the ideal laptop for creative professionals who need uncompromising performance for tasks like video editing, 3D rendering, and music production. The M4 Pro chip is a game-changer, and its ecosystem integration is seamless for Apple users.",
+                        price: 1599,
+                        pros: ["Exceptional performance for creative work", "Best-in-class display and speakers", "Outstanding battery life"],
+                        cons: ["High price point", "Software compatibility issues with some niche programs"],
+                        bestPrice: "$1,599",
+                        lowestRecordedPrice: "$1,299",
+                        bestTimeToBuy: "During back-to-school promotions and major sales events.",
+                        affiliateLink: "https://www.example.com/macbook-pro-14-m4-affiliate-link"
+                    }
+                ],
+                gamer: [
+                    {
+                        model: "Acer Predator Triton Neo 16",
+                        description: "PCMag names this the best gaming laptop for most people, offering a great balance of high performance for modern games and a more manageable price point than enthusiast models.",
+                        whyPick: "For gamers on a budget who don't want to compromise on performance, the Acer Predator is an excellent choice. It delivers strong frame rates and a fast refresh rate, allowing you to play the latest titles without breaking the bank.",
+                        price: 1549,
+                        pros: ["Excellent gaming performance", "Strong cooling system", "Great value for a gaming laptop"],
+                        cons: ["Can be noisy under heavy load", "Less portable than non-gaming laptops"],
+                        bestPrice: "$1,549",
+                        lowestRecordedPrice: "$1,273",
+                        bestTimeToBuy: "Black Friday and other major holiday sales.",
+                        affiliateLink: "https://www.example.com/acer-predator-affiliate-link"
+                    },
+                    {
+                        model: "Razer Blade 16 (2025)",
+                        description: "PC Gamer calls this the best overall gaming laptop, with a powerful blend of performance and a premium, compact chassis. It's a top choice for serious gamers and creative professionals.",
+                        whyPick: "This is the ultimate gaming laptop for those who want a blend of power and portability. It's incredibly powerful while still maintaining a sleek, minimalist design that's perfect for a desktop replacement or a high-end travel machine.",
+                        price: 2999,
+                        pros: ["Blazing-fast gaming performance", "Slim, premium design", "Excellent display options"],
+                        cons: ["Very expensive", "Can run hot under load"],
+                        bestPrice: "$2,999",
+                        lowestRecordedPrice: "$2,500",
+                        bestTimeToBuy: "Major holiday sales (Black Friday, Cyber Monday) and manufacturer promotions.",
+                        affiliateLink: "https://www.example.com/razer-blade-16-affiliate-link"
+                    },
+                    {
+                        model: "Lenovo Legion Pro 7i Gen 10",
+                        description: "A high-performance gaming laptop that offers top-tier frame rates for less than the competition. PC Gamer notes its redesigned chassis and superior cooling system for delivering elite performance.",
+                        whyPick: "This is a great option for the enthusiast gamer who prioritizes raw performance above all else. Its thicker chassis and advanced cooling allow it to push high-end components to their full potential, giving you the best possible frame rates.",
+                        price: 2699,
+                        pros: ["Top-tier gaming performance", "Superior cooling system", "Excellent value for a high-end machine"],
+                        cons: ["Bulky design", "Fans can be loud"],
+                        bestPrice: "$2,699",
+                        lowestRecordedPrice: "$2,200",
+                        bestTimeToBuy: "Lenovo's frequent sales and major holiday deals.",
+                        affiliateLink: "https://www.example.com/lenovo-legion-pro-7i-affiliate-link"
+                    }
+                ]
+            },
+            purchaseAdvice: "The best time to buy a laptop is during the back-to-school season (July-August) and the 'Black Friday season' (October-November). You'll find significant discounts as retailers clear out older stock before new models are announced."
+        },
+        headphones: {
+            inputHtml: `
+                <label for="use-case" class="block text-sm font-medium text-gray-400 mb-1">Primary Use Case</label>
+                <select id="use-case" class="flex-1 rounded-md">
+                    <option value="" disabled selected>Select a purpose</option>
+                    <option value="wireless">Wireless (Noise-Cancelling)</option>
+                    <option value="wired">Wired (Audiophile)</option>
+                </select>
+            `,
+            recommendations: {
+                wireless: [
+                    {
+                        model: "Sony WH-1000XM6",
+                        description: "CNET's top pick for overall wireless headphones. The XM6 sets a new benchmark for exceptional noise cancellation, superior sound quality, and a comfortable fit.",
+                        whyPick: "For travelers, remote workers, or anyone who needs top-tier sound and silence, the Sony WH-1000XM6 is the best choice. Its industry-leading noise cancellation and excellent audio quality make it a perfect all-around performer.",
+                        price: 448,
+                        pros: ["Unbeatable noise cancellation", "Superb audio quality", "Comfortable for long wear"],
+                        cons: ["Premium price point", "Case can be bulky"],
+                        bestPrice: "$448",
+                        lowestRecordedPrice: "$380",
+                        bestTimeToBuy: "Black Friday (November) and during major sales around new product announcements.",
+                        affiliateLink: "https://www.example.com/sony-xm6-affiliate-link"
+                    },
+                    {
+                        model: "Bose QuietComfort Ultra Headphones",
+                        description: "A strong competitor to Sony, praised by CNET for its lightweight, comfortable design and excellent noise-cancelling performance. It also features immersive audio modes.",
+                        whyPick: "If comfort is your top priority and you want powerful noise cancellation, the Bose QuietComfort Ultra is an excellent choice. It's perfect for long flights and extended listening sessions.",
+                        price: 429,
+                        pros: ["Incredibly comfortable and lightweight", "Class-leading noise cancellation", "Rich, punchy sound"],
+                        cons: ["Slightly less detailed sound than Sony", "Immersive audio mode can be gimmicky"],
+                        bestPrice: "$429",
+                        lowestRecordedPrice: "$379",
+                        bestTimeToBuy: "Look for sales around holiday weekends and special promotions from Bose.",
+                        affiliateLink: "https://www.example.com/bose-qc-ultra-affiliate-link"
+                    },
+                    {
+                        model: "Sennheiser Momentum 4 Wireless",
+                        description: "Offers a great combination of superb battery life and balanced, high-quality audio. CNET recommends it as a strong alternative to the top two brands.",
+                        whyPick: "If you prioritize battery life and prefer a balanced sound signature, the Sennheiser Momentum 4 is a fantastic option. It's a reliable choice that offers excellent performance for all types of music.",
+                        price: 300,
+                        pros: ["Excellent battery life (up to 60 hours)", "Detailed, balanced sound", "Comfortable, simple design"],
+                        cons: ["Noise cancellation is good, but not best-in-class", "Lacks some advanced features"],
+                        bestPrice: "$300",
+                        lowestRecordedPrice: "$280",
+                        bestTimeToBuy: "Often found at discounts during major sales events.",
+                        affiliateLink: "https://www.example.com/sennheiser-momentum-4-affiliate-link"
+                    }
+                ],
+                wired: [
+                    {
+                        model: "Sennheiser HD 660S2",
+                        description: "A top choice for audiophiles on a budget. This headphone is praised by reviewers for its refined, natural sound signature and comfortable fit, making it perfect for long listening sessions.",
+                        whyPick: "For the purist who wants the highest quality audio for home listening, a wired headphone is the way to go. The HD 660S2 provides a balanced, detailed sound that reveals nuances in music that wireless headphones often miss.",
+                        price: 499,
+                        pros: ["Superb, balanced audio quality", "Comfortable, lightweight design", "Durable and built to last"],
+                        cons: ["Requires a separate amplifier for best performance", "Open-back design leaks sound"],
+                        bestPrice: "$499",
+                        lowestRecordedPrice: "$450",
+                        bestTimeToBuy: "Sales around audiophile events or holiday weekends.",
+                        affiliateLink: "https://www.example.com/sennheiser-hd660s2-affiliate-link"
+                    },
+                    {
+                        model: "Sony MDR-M1",
+                        description: "A wired headphone that delivers exceptional sound quality and studio-grade clarity. CNET notes its big, open sound and detailed presentation, making it a great value for the price.",
+                        whyPick: "For those who are stepping into the world of audiophile-grade audio, the Sony MDR-M1 is a fantastic starting point. It's easy to drive with a laptop or phone and provides a significant step up in sound quality over consumer models.",
+                        price: 248,
+                        pros: ["Exceptional sound quality for the price", "Lightweight and comfortable", "Good passive noise isolation"],
+                        cons: ["Simple, professional design", "Not as feature-rich as wireless options"],
+                        bestPrice: "$248",
+                        lowestRecordedPrice: "$220",
+                        bestTimeToBuy: "Check for discounts on Amazon and other major retailers throughout the year.",
+                        affiliateLink: "https://www.example.com/sony-mdr-m1-affiliate-link"
+                    },
+                    {
+                        model: "Beyerdynamic DT 700 PRO X",
+                        description: "A popular choice for producers and audiophiles who need a closed-back headphone for isolation. The DT 700 PRO X provides detailed and accurate sound for mixing and critical listening.",
+                        whyPick: "If you need a headphone that offers excellent sound quality with the added benefit of sound isolation, this is the perfect pick. It’s ideal for use in a noisy environment while still providing professional-grade audio performance.",
+                        price: 299,
+                        pros: ["Excellent sound isolation", "Highly accurate audio reproduction", "Durable and easy to repair"],
+                        cons: ["Clamping force can be tight", "Less bass-forward than consumer headphones"],
+                        bestPrice: "$299",
+                        lowestRecordedPrice: "$270",
+                        bestTimeToBuy: "Black Friday and promotions on pro-audio sites.",
+                        affiliateLink: "https://www.example.com/beyerdynamic-dt700-affiliate-link"
+                    }
+                ]
+            },
+            purchaseAdvice: "The best time to buy headphones is during major sales events like Black Friday, Cyber Monday, and Amazon Prime Day. You can also find good deals on older models in the spring when new versions are released."
+        }
+    };
+
+    function updateInputs() {
+        document.getElementById('specific-input').innerHTML = mockData[currentCategory].inputHtml;
+    }
+
+    async function getRecommendations() {
+        document.getElementById('loading-indicator').classList.remove('hidden');
+        document.getElementById('results').innerHTML = '';
+
+        // Simulate a network delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        document.getElementById('loading-indicator').classList.add('hidden');
+        renderResults();
+    }
+
+    function renderResults() {
+        const resultsDiv = document.getElementById('results');
+        let recommendationsList = [];
+        let purchaseAdvice;
+        let recommendationsHtml = '';
+
+        const minBudget = parseFloat(document.getElementById('min-budget').value);
+        const maxBudget = parseFloat(document.getElementById('max-budget').value);
+
+        if (currentCategory === 'tv') {
+            recommendationsList = mockData.tv.recommendations.filter(tv => {
+                const price = tv.price;
+                const matchesMin = isNaN(minBudget) || price >= minBudget;
+                const matchesMax = isNaN(maxBudget) || price <= maxBudget;
+                return matchesMin && matchesMax;
+            });
+            
+            if (recommendationsList.length === 0 && (isNaN(minBudget) && isNaN(maxBudget))) {
+                recommendationsList = mockData.tv.recommendations;
+            }
+
+            purchaseAdvice = mockData.tv.purchaseAdvice;
+
+        } else if (currentCategory === 'laptop') {
+            const useCase = document.getElementById('use-case').value;
+            const allRecommendations = mockData.laptop.recommendations[useCase] || mockData.laptop.recommendations.student;
+
+            recommendationsList = allRecommendations.filter(laptop => {
+                const price = laptop.price;
+                const matchesMin = isNaN(minBudget) || price >= minBudget;
+                const matchesMax = isNaN(maxBudget) || price <= maxBudget;
+                return matchesMin && matchesMax;
+            });
+
+            if (recommendationsList.length === 0 && (isNaN(minBudget) && isNaN(maxBudget))) {
+                 recommendationsList = allRecommendations;
+            }
+
+            purchaseAdvice = mockData.laptop.purchaseAdvice;
+        } else if (currentCategory === 'headphones') {
+            const useCase = document.getElementById('use-case').value;
+            const allRecommendations = mockData.headphones.recommendations[useCase] || [];
+
+            recommendationsList = allRecommendations.filter(headphone => {
+                const price = headphone.price;
+                const matchesMin = isNaN(minBudget) || price >= minBudget;
+                const matchesMax = isNaN(maxBudget) || price <= maxBudget;
+                return matchesMin && matchesMax;
+            });
+
+            if (recommendationsList.length === 0 && (isNaN(minBudget) && isNaN(maxBudget))) {
+                recommendationsList = allRecommendations;
+            }
+
+            purchaseAdvice = mockData.headphones.purchaseAdvice;
+        }
+
+        if (recommendationsList.length === 0) {
+            recommendationsHtml = `
+                <div class="p-6 rounded-lg bg-gray-800 border border-gray-700">
+                    <p class="text-center text-gray-400">No recommendations found for your criteria. Please adjust your search and try again.</p>
+                </div>
+            `;
+        } else {
+            recommendationsHtml = recommendationsList.map(item => `
+                <div class="result-card bg-gray-800 p-6 rounded-lg border border-gray-700 space-y-4">
+                    <h3 class="text-xl font-semibold text-blue-300 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                        ${item.model}
+                    </h3>
+                    <p class="text-sm text-gray-400">${item.description}</p>
+                    <div class="p-3 bg-gray-700 rounded-md">
+                        <h4 class="font-medium text-gray-200 flex items-center mb-1">
+                            Why This Pick?
+                        </h4>
+                        <p class="text-sm text-gray-300">${item.whyPick}</p>
+                    </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <div class="p-3 bg-gray-700 rounded-md">
+                            <h4 class="font-medium text-green-400 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
+                                </svg>
+                                Pros
+                            </h4>
+                            <ul class="list-disc list-inside text-sm text-gray-300 mt-1">
+                                ${item.pros.map(pro => `<li>${pro}</li>`).join('')}
+                            </ul>
+                        </div>
+                        <div class="p-3 bg-gray-700 rounded-md">
+                            <h4 class="font-medium text-red-400 flex items-center">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                                Cons
+                            </h4>
+                            <ul class="list-disc list-inside text-sm text-gray-300 mt-1">
+                                ${item.cons.map(con => `<li>${con}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="text-sm text-gray-300 mt-4">
+                        <p class="flex justify-between">
+                            <span class="font-bold">Current Price:</span>
+                            <span class="text-green-500">${item.bestPrice}</span>
+                        </p>
+                        <p class="flex justify-between mt-2">
+                            <span class="font-bold">Lowest Recorded Price:</span>
+                            <span>${item.lowestRecordedPrice}</span>
+                        </p>
+                        <p class="mt-2"><span class="font-bold">Best Time to Buy:</span> ${item.bestTimeToBuy}</p>
+                    </div>
+                    <a href="${item.affiliateLink}" target="_blank" class="block w-full text-center bg-blue-600 text-white font-semibold py-2 rounded-md mt-4 hover:bg-blue-700 transition">
+                        Buy Now
+                    </a>
+                </div>
+            `).join('');
+        }
+        
+        const adviceHtml = `
+            <div class="result-card bg-gray-800 p-6 rounded-lg border border-gray-700 mt-8">
+                <h3 class="text-xl font-semibold text-gray-200 mb-2">General Purchase Advice</h3>
+                <p class="text-sm text-gray-400">${purchaseAdvice}</p>
+            </div>
+        `;
+
+        resultsDiv.innerHTML = recommendationsHtml + adviceHtml;
+    }
+
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+            e.target.classList.add('active');
+            currentCategory = e.target.id.replace('tab-', '');
+            updateInputs();
+            document.getElementById('results').innerHTML = ''; // Clear old results
+        });
+    });
+
+    // Initial setup
+    updateInputs();
+</script>
+
+</body>
+</html>
